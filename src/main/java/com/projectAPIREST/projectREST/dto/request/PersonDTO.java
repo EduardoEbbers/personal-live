@@ -1,6 +1,5 @@
 package com.projectAPIREST.projectREST.dto.request;
 
-import com.projectAPIREST.projectREST.entity.Phone;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +8,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,11 +33,10 @@ public class PersonDTO {
     @CPF
     private String cpf;
 
-    //@JsonSerialize(using = LocalDateSerializer.class)
-    //@JsonDeserialize(as = LocalDate.class)
+    @NotNull
     private LocalDate birthDate;
 
     @Valid
     @NotEmpty
-    private List<Phone> phones;
+    private List<PhoneDTO> phones;
 }

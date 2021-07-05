@@ -1,6 +1,6 @@
 package com.projectAPIREST.projectREST.service;
 
-import com.projectAPIREST.projectREST.dto.MessageResponseDTO;
+import com.projectAPIREST.projectREST.dto.response.MessageResponseDTO;
 import com.projectAPIREST.projectREST.dto.mapper.PersonMapper;
 import com.projectAPIREST.projectREST.dto.request.PersonDTO;
 import com.projectAPIREST.projectREST.entity.Person;
@@ -27,15 +27,14 @@ public class PersonService {
         Person personToSave = personMapper.toModel(personDTO);
 
         Person savedPerson = personRepository.save(personToSave);
-        return MessageResponseDTO
-                .builder()
-                .message("Created person with ID " + savedPerson.getId())
-                .build();
+
+        MessageResponseDTO messageResponse = createMessageResponse("Person successfully created with ID ", savedPerson.getId());
+        return messageResponse;
     }
 
     public List<PersonDTO> listAll() {
-        List<Person> allPeople = personRepository.findAll();
-        return allPeople.stream()
+        List<Person> people = personRepository.findAll();
+        return people.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -47,11 +46,29 @@ public class PersonService {
     }
 
     public void delete(Long id) throws PersonNotFoundException {
-        verifyIfExistis(id);
+        verifyIfExists(id);
         personRepository.deleteById(id);
     }
 
-    private Person verifyIfExistis(Long id) throws PersonNotFoundException {
+    public MessageResponseDTO updateById(Long id, PersonDTO personDTO) throws PersonNotFoundException {
+        personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+
+        Person personToUpdate = personMapper.toModel(personDTO);
+        Person updatedPerson = personRepository.save(personToUpdate);
+
+        MessageResponseDTO messageResponse = createMessageResponse("Person successfully updated with ID ", updatedPerson.getId());
+        return messageResponse;
+    }
+
+    private MessageResponseDTO createMessageResponse(String message, Long id) {
+        return MessageResponseDTO
+                .builder()
+                .message(message + id)
+                .build();
+    }
+
+    private Person verifyIfExists(Long id) throws PersonNotFoundException {
         return personRepository.findById(id)
                 .orElseThrow(() -> new PersonNotFoundException(id));
     }

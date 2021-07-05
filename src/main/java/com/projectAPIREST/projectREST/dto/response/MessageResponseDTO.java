@@ -1,4 +1,4 @@
-package com.projectAPIREST.projectREST.dto;
+package com.projectAPIREST.projectREST.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
