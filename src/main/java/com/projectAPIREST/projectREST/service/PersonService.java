@@ -4,6 +4,7 @@ import com.projectAPIREST.projectREST.dto.MessageResponseDTO;
 import com.projectAPIREST.projectREST.dto.mapper.PersonMapper;
 import com.projectAPIREST.projectREST.dto.request.PersonDTO;
 import com.projectAPIREST.projectREST.entity.Person;
+import com.projectAPIREST.projectREST.exception.PersonNotFoundException;
 import com.projectAPIREST.projectREST.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,21 @@ public class PersonService {
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+        return personMapper.toDTO(person);
+    }
+
+    public void delete(Long id) throws PersonNotFoundException {
+        verifyIfExistis(id);
+        personRepository.deleteById(id);
+    }
+
+    private Person verifyIfExistis(Long id) throws PersonNotFoundException {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
     }
 }
